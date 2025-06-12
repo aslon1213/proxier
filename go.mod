@@ -5,6 +5,7 @@ go 1.23.4
 require (
 	github.com/gofiber/fiber/v2 v2.52.8
 	github.com/rs/zerolog v1.34.0
+	github.com/spf13/cobra v1.9.1
 )
 
 require (
@@ -16,7 +17,6 @@ require (
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/mattn/go-runewidth v0.0.16 // indirect
 	github.com/rivo/uniseg v0.2.0 // indirect
-	github.com/spf13/cobra v1.9.1 // indirect
 	github.com/spf13/pflag v1.0.6 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasthttp v1.51.0 // indirect

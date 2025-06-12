@@ -22,7 +22,7 @@ builds:
       - linux
       - windows
       - darwin
-    main: ./cmd/main.go
+    main: ./cmd/server/main.go
 
 archives:
   - formats: [tar.gz]
