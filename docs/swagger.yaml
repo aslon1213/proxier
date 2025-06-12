@@ -1,0 +1,8 @@
+basePath: /
+info:
+  contact: {}
+  description: Provides API documentation
+  title: Proxy Worker API
+  version: "1.0"
+paths: {}
+swagger: "2.0"

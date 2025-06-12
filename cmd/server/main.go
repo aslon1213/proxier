@@ -7,10 +7,19 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/swagger" // swagger handler
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )
 
+// ProxyJob represents the structure of a proxy job request
+// @Description Proxy job request structure
+// @Param url query string true "URL to proxy"
+// @Param method query string true "HTTP method"
+// @Param headers query object false "Request headers"
+// @Param body query string false "Request body"
+// @Param cookies query object false "Request cookies"
+// @Param timeout query int false "Request timeout in seconds"
 type ProxyJob struct {
 	URL     string            `json:"url"`
 	Method  string            `json:"method"`
@@ -20,6 +29,11 @@ type ProxyJob struct {
 	Timeout int               `json:"timeout"`
 }
 
+// ProxyResponse represents the structure of a proxy job response
+// @Description Proxy job response structure
+// @Param status_code query int true "HTTP status code"
+// @Param body query []byte true "Response body"
+// @Param errs query []error false "Errors encountered during the request"
 type ProxyResponse struct {
 	StatusCode int     `json:"status_code"`
 	Body       []byte  `json:"body"`
@@ -61,6 +75,12 @@ func PerformRequest(ctx context.Context, agent *fiber.Agent, job ProxyJob, respo
 	}
 }
 
+// @title Proxy Worker API
+// @version 1.0
+// @description Proxy Worker API
+// @BasePath /
+// PerformProxyJob handles the proxy job request
+// @Description Handles the proxy job request and returns the response
 func PerformProxyJob(c *fiber.Ctx) error {
 	logger := log.With().Str("handler", "PerformProxyJob").Logger()
 
@@ -136,13 +156,45 @@ func PerformProxyJob(c *fiber.Ctx) error {
 	}
 }
 
+// @title Proxy Worker API
+// @version 1.0
+// @description Proxy Worker API
+// @BasePath /
+// Docs provides API documentation
+// @Description Provides API documentation
+func Docs(c *fiber.Ctx) error {
+	// serve swagger files
+	return c.SendFile("docs/swagger.yml")
+}
+
 func main() {
 	// Configure zerolog
+
 	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
 	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stdout})
 
 	app := fiber.New()
 	app.Post("/proxy", PerformProxyJob)
+	app.Get("/health", func(c *fiber.Ctx) error {
+		return c.SendString("OK")
+	})
+	app.Get("/docs", Docs)
+	app.Get("/proxy", Docs)
+	app.Get("/swagger/*", swagger.HandlerDefault) // default
+
+	// app.Get("/swagger/*", swagger.New(swagger.Config{ // custom
+	// 	URL:         "http://localhost:3010/swagger/doc.json",
+	// 	DeepLinking: false,
+	// 	// Expand ("list") or Collapse ("none") tag groups by default
+	// 	DocExpansion: "none",
+	// 	// Prefill OAuth ClientId on Authorize popup
+	// 	OAuth: &swagger.OAuthConfig{
+	// 		AppName:  "OAuth Provider",
+	// 		ClientId: "21bb4edc-05a7-4afc-86f1-2e151e4ba6e2",
+	// 	},
+	// 	// Ability to change OAuth2 redirect uri location
+	// 	OAuth2RedirectUrl: "http://localhost:3010/swagger/oauth2-redirect.html",
+	// }))
 
 	log.Info().Msg("Starting server on :3010")
 	log.Fatal().Err(app.Listen(":3010")).Msg("Server stopped")

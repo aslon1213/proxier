@@ -1,0 +1,19 @@
+version: '3.1'
+
+services:
+
+  proxy-server:
+    build:
+      context: ..
+      dockerfile: build/dockerfiles/Dockerfile
+    ports:
+      - "3010:3010"
+    environment:
+      PROXY_SERVER_HOST: 0.0.0.0
+      PROXY_SERVER_PORT: 3010
+    networks:
+      - proxy-network
+
+networks:
+  proxy-network:
+    driver: bridge
